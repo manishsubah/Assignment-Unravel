@@ -2,6 +2,7 @@ package com.example.assignmentunravel
 
 import android.content.Context
 import android.net.Uri
+import android.os.PowerManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +42,7 @@ class VideoAdapter(var context: Context, var videos: ArrayList<Video>, var video
                     } else if(playbackState == Player.STATE_READY) {
                         binding.pbLoading.visibility = View.GONE
                     }
+
                 }
             })
 
@@ -54,28 +56,44 @@ class VideoAdapter(var context: Context, var videos: ArrayList<Video>, var video
             mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(
                 MediaItem.fromUri(Uri.parse(url)))
 
-            exoPlayer.setMediaSource(mediaSource)
+            exoPlayer.setMediaSource(mediaSource, true)
             exoPlayer.prepare()
-            if(absoluteAdapterPosition == 0) {
-                exoPlayer.playWhenReady = true
-                exoPlayer.play()
-            }
+            exoPlayer.playWhenReady = true
+            exoPlayer.play()
+
+//            if(absoluteAdapterPosition == 1) {
+//                exoPlayer.playWhenReady = true
+//                exoPlayer.play()
+//            }
 
             videoPreparedListener.onVideoPrepared(ExoPlayerItem(exoPlayer, absoluteAdapterPosition))
             //Play and Pause the video
-            binding.transperant.setOnClickListener{
-
-                    if (exoPlayer.isPlaying) {
-                        exoPlayer.playWhenReady = false
-                        exoPlayer.playbackState
-                        exoPlayer.pause()
-                    }
-                    else {
-                        exoPlayer.playWhenReady = true
-                        exoPlayer.playbackState
-                        exoPlayer.play()
-                    }
+            binding.playerView.setOnClickListener{
+                if (exoPlayer.isPlaying) {
+                    exoPlayer.playWhenReady = false
+                    exoPlayer.playbackState
+                    exoPlayer.pause()
                 }
+                else {
+                    exoPlayer.playWhenReady = true
+                    exoPlayer.playbackState
+                    exoPlayer.play()
+                }
+
+            }
+//            binding.transperant.setOnClickListener{
+//
+//                    if (exoPlayer.isPlaying) {
+//                        exoPlayer.playWhenReady = false
+//                        exoPlayer.playbackState
+//                        exoPlayer.pause()
+//                    }
+//                    else {
+//                        exoPlayer.playWhenReady = true
+//                        exoPlayer.playbackState
+//                        exoPlayer.play()
+//                    }
+//                }
         }
     }
 
@@ -86,7 +104,6 @@ class VideoAdapter(var context: Context, var videos: ArrayList<Video>, var video
 
     override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
         val model = videos[position]
-
         holder.setVideoPath(model.url)
     }
 
@@ -97,5 +114,6 @@ class VideoAdapter(var context: Context, var videos: ArrayList<Video>, var video
         fun onVideoPrepared(exoPlayerItem: ExoPlayerItem)
 
     }
+
 
 }
